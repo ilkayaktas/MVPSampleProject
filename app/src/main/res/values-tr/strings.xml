@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MVPSampleProject</string>
+    <string name="all_errormessage">Hata durumu oluştu.</string>
+    <string name="splashscreen_slogan">Bu bir şablon uygulamadır!</string>
+    <string name="settings">Ayarlar</string>
+    <string name="sorulari_goster">Soruları Göster!</string>
+</resources>

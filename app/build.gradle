@@ -1,0 +1,143 @@
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+
+def getTag(){
+    def tmpTag = 'git describe --tags'.execute([], project.rootDir).text.trim()
+    if(tmpTag == ""){
+        return '0.1'
+    }
+
+    return tmpTag
+}
+
+def getCommitCount(){
+    def tmpCommitCount = 'git rev-list --count HEAD'.execute([], project.rootDir).text.trim()
+
+    if(tmpCommitCount == ""){
+        return 100
+    }
+
+    return 100 + Integer.parseInt(tmpCommitCount)
+}
+
+def getApiKey() {
+    def apiKeyFile = file('secret.properties')
+    if (apiKeyFile.canRead()) {
+        def Properties props = new Properties()
+        props.load(new FileInputStream(apiKeyFile))
+        return props['API_KEY']
+    } else {
+        throw new GradleException("Missing api key. Could not read from secret.properties!")
+    }
+}
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'projectname'
+            keyPassword '12345678'
+            storeFile file('../projectname.jks')
+            storePassword '12345678'
+        }
+    }
+
+
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    defaultConfig {
+        applicationId "com.ilkayaktas.projectname"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode getCommitCount()
+        versionName getTag()
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        android.defaultConfig.vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+
+            buildConfigField "String", "ADMOB_APP_ID", "\"ca-app-pub-8425622277008316~9226494899\""
+            resValue "string", "ADMOB_BANNER_AD_UNIT_ID", "\"/6499/example/banner\""
+            buildConfigField "String", "ADMOB_BANNER_AD_UNIT_ID", "\"/6499/example/banner\""
+            buildConfigField "String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"/6499/example/interstitial\""
+            buildConfigField "String", "ADMOB_REWARDEDVIDEO_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/5224354917\""
+            buildConfigField "String", "ADMOB_NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\""
+        }
+        release {
+            debuggable false
+            applicationIdSuffix ".release"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "ADMOB_APP_ID", "\"ca-app-pub-8425622277008316~9226494899\""
+            resValue "string", "ADMOB_BANNER_AD_UNIT_ID", "\"ca-app-pub-8425622277008316/603656823\""
+            buildConfigField "String", "ADMOB_BANNER_AD_UNIT_ID", "\"ca-app-pub-8425622277008316/603656823\""
+            buildConfigField "String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"ca-app-pub-8425622277008316/8201968080\""
+            buildConfigField "String", "ADMOB_REWARDEDVIDEO_AD_UNIT_ID", "\"ca-app-pub-8425622277008316/9544584319\""
+            buildConfigField "String", "ADMOB_NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\""
+        }
+
+
+        applicationVariants.all {
+            variant -> variant.buildConfigField "String", "API_KEY", "\"" + getApiKey() + "\""
+        }
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+    dataBinding {
+        enabled = true
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    // Appcompat and Constraint Layout
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintsLibraryVersion"
+
+    // Constraints layout
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+
+    // Preference
+    implementation "com.android.support:preference-v7:$rootProject.supportLibraryVersion"
+
+    // Snackbar
+    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+
+
+    // Test
+    testImplementation "junit:junit:$rootProject.junitVersion"
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.google.code.findbugs'
+    })
+
+    // Multidex
+    implementation "com.android.support:multidex:$rootProject.multidexVersion"
+
+    // Dagger
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    compileOnly 'javax.annotation:jsr250-api:1.0'
+
+    // Butterknife
+    implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
+
+    // RXJava
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
+
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.0'
+    annotationProcessor "org.projectlombok:lombok:1.18.0"
+}

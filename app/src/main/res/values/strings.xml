@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MVPSampleProject</string>
+    <string name="all_errormessage">Error!</string>
+    <string name="splashscreen_slogan">This is a template application!</string>
+    <string name="settings">Settings</string>
+    <string name="sorulari_goster">Show Questions!</string>
+</resources>
